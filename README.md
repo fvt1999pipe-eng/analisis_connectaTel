@@ -1,103 +1,95 @@
-# 📱 Análisis de clientes de ConnectaTel
+# Análisis de clientes de ConnectaTel
 
-Análisis exploratorio del comportamiento de uso de los clientes de **ConnectaTel**, una empresa de telecomunicaciones con operaciones en México y Colombia. El objetivo es entender cómo los clientes usan los servicios móviles (llamadas y mensajes), detectar comportamientos atípicos y segmentarlos para optimizar la oferta comercial.
+Análisis exploratorio del uso de los servicios móviles de 4.000 clientes de una empresa de telecomunicaciones con operación en México y Colombia. El objetivo es saber si sus dos planes, Básico y Premium, corresponden al uso real de los clientes.
 
----
+**Resultado principal:** los clientes Básico y Premium consumen lo mismo, y muy por debajo de lo que incluyen sus planes. La recomendación es rediseñar la oferta.
 
-## 🎯 Objetivo del proyecto
+[Ver el notebook](analisis_connectatel.ipynb) · [Abrir en Google Colab](https://colab.research.google.com/github/fvt1999pipe-eng/analisis_connectaTel/blob/main/analisis_connectatel.ipynb)
 
-Construir una visión clara, confiable y accionable del uso real de los servicios, para responder las siguientes preguntas del negocio:
+## Preguntas de negocio
 
-- ¿Qué segmentos de clientes usan más o menos las llamadas y los mensajes?
-- ¿Qué usuarios presentan valores atípicos que puedan indicar comportamientos inusuales, fraude o errores de registro?
-- ¿Cómo varía el uso según la edad y el tipo de plan contratado?
-- ¿Qué patrones pueden ayudar a diseñar mejores planes y mejorar la satisfacción del cliente?
+1. ¿Qué calidad tienen los datos y qué hay que corregir antes de analizarlos?
+2. ¿Cómo usan el servicio los clientes y qué diferencias hay entre los dos planes?
+3. ¿Los valores extremos son errores de registro o clientes reales de alto consumo?
+4. ¿Qué segmentos de clientes existen y qué implican para la oferta de planes?
 
----
+## Resultados
 
-## 📂 Datasets utilizados
+| Hallazgo | Dato |
+|---|---|
+| Consumo del cliente típico (mediana) | 5 mensajes, 4 llamadas y 19,8 minutos |
+| Minutos usados frente a minutos incluidos | 23 en promedio, frente a 100 (Básico) y 600 (Premium) |
+| Diferencia de consumo entre planes | Ninguna: el patrón es el mismo, aunque Premium cuesta más del doble |
+| Clientes sin una ciudad válida | 565 de 4.000 (14,1%) |
+| Valores atípicos | Clientes reales de alto consumo; se conservan en el análisis |
 
-| Archivo | Filas | Descripción |
+![Minutos en llamadas por plan](img/minutos_por_plan.png)
+
+*Minutos en llamadas por plan. Las dos distribuciones tienen la misma forma: casi todos los clientes hablan menos de 40 minutos, sin importar el plan.*
+
+![Clientes por nivel de uso](img/segmentos_por_uso.png)
+
+*Clientes por nivel de uso. La mayoría está en Uso medio; Alto uso es el segmento más pequeño.*
+
+### Recomendaciones
+
+1. Crear un plan de entrada más económico para los clientes de bajo uso.
+2. Rediseñar el plan Premium para que se diferencie por valor (más GB, beneficios o servicios) y no por minutos que nadie usa.
+3. Retener a los clientes Premium de bajo uso antes de que cancelen por sentir que pagan de más.
+4. Ofrecer un plan intermedio o un paquete de minutos a los clientes de alto uso del plan Básico.
+5. Mejorar la calidad de los datos en el origen (edad, ciudad y fechas).
+
+## Datos
+
+| Archivo | Filas | Contenido |
 |---|---|---|
-| `plans.csv` | 2 | Catálogo de planes (Básico y Premium): precio mensual, minutos, mensajes y GB incluidos, y costo por consumo extra. |
-| `users_latam.csv` | 4.000 | Información de los clientes: edad, ciudad, fecha de registro, plan contratado y fecha de cancelación (churn). |
-| `usage.csv` | 40.000 | Registros de uso durante 2024: tipo de evento (llamada o mensaje), fecha, duración de las llamadas y longitud de los mensajes. |
+| `plans.csv` | 2 | Planes vigentes: precio mensual, minutos, mensajes y GB incluidos, y costo del consumo adicional. |
+| `users_latam.csv` | 4.000 | Clientes: edad, ciudad, fecha de registro, plan y fecha de cancelación. |
+| `usage.csv` | 40.000 | Uso durante 2024: tipo de registro (llamada o mensaje), fecha, duración de la llamada y longitud del mensaje. |
 
----
+Los datos son un caso de estudio del bootcamp de Análisis de Datos de TripleTen y no se incluyen en el repositorio.
 
-## 🔄 Etapas del análisis
+## Metodología
 
-1. **Carga y exploración**: estructura, tipos de datos y dimensiones de cada dataset.
-2. **Identificación de problemas de calidad**: valores nulos, sentinels (`-999` en edad, `"?"` en ciudad) y fechas fuera de rango (años 2026).
-3. **Limpieza de datos**: reemplazo de sentinels, conversión de fechas y validación de que los nulos de `duration` y `length` dependen del tipo de registro.
-4. **Estadísticas descriptivas**: agregación del uso por usuario (mensajes, llamadas y minutos) y unión con la información de clientes.
-5. **Visualización y outliers**: histogramas por plan, boxplots y cálculo de límites con el método IQR.
-6. **Segmentación de clientes**: por nivel de uso (Bajo, Medio y Alto) y por edad (Joven, Adulto y Adulto Mayor).
-7. **Insight
+1. **Exploración:** estructura, tipos de datos y dimensiones de cada tabla.
+2. **Calidad de los datos:** valores nulos, centinelas (`-999` en la edad y `?` en la ciudad) y fechas fuera de rango (año 2026).
+3. **Limpieza:** reemplazo de centinelas, conversión de fechas y verificación de que los nulos de `duration` y `length` dependen del tipo de registro.
+4. **Uso por cliente:** mensajes, llamadas y minutos por cliente, unidos con los datos de cada uno.
+5. **Distribuciones y valores atípicos:** histogramas por plan, diagramas de caja y límites con el método IQR.
+6. **Segmentación:** por nivel de uso (bajo, medio y alto) y por edad (joven, adulto y adulto mayor).
+7. **Conclusiones y recomendaciones** para el negocio.
 
----
+## Estructura del repositorio
 
-## 💡 Principales hallazgos
-
-- El cliente típico consume poco: una mediana de **5 mensajes, 4 llamadas y 19,8 minutos**.
-- Los clientes **Básico y Premium tienen el mismo patrón de consumo**, aunque el Premium cuesta más del doble.
-- El uso real está **muy por debajo** de lo incluido en los planes (media de 23 minutos frente a 100 y 600 incluidos).
-- Los outliers representan **clientes intensivos reales**, no errores ni fraude.
-- **Recomendación principal**: rediseñar la oferta con un plan de entrada más económico y un Premium que se diferencie por valor y no por volumen.
-
----
-
-## 🛠️ Herramientas
-
-- Python 3
-- pandas
-- matplotlib
-- seaborn
-- Jupyter Notebook / Google Colab
-
----
-
-## ▶️ Cómo ejecutar el notebook
-
-### Opción 1: Google Colab (recomendada)
-
-1. Abre [Google Colab](https://colab.research.google.com/).
-2. Ve a **Archivo → Abrir cuaderno → GitHub**.
-3. Pega la URL de este repositorio y selecciona el notebook del proyecto.
-4. Sube los tres archivos CSV desde el panel lateral **Archivos** (ícono de carpeta).
-5. Ejecuta todas las celdas con **Entorno de ejecución → Ejecutar todas**.
-
-### Opción 2: Jupyter en local
-
-```bash
-git clone <URL-de-este-repositorio>
-cd <nombre-del-repositorio>
-pip install pandas matplotlib seaborn jupyter
-jupyter notebook
+```
+analisis_connectaTel/
+├── analisis_connectatel.ipynb   Notebook con el análisis completo
+├── img/                         Gráficos usados en este README
+├── requirements.txt             Librerías necesarias
+└── README.md
 ```
 
----
+## Cómo reproducir el análisis
 
-## 🔁 Guía de reproducción
+1. Clona el repositorio e instala las librerías:
 
-1. Descarga los tres datasets: `plans.csv`, `users_latam.csv` y `usage.csv`.
-2. Colócalos en una carpeta accesible desde el notebook.
-3. Ajusta las rutas de carga si es necesario. El notebook usa rutas del tipo `/datasets/archivo.csv`:
+   ```bash
+   git clone https://github.com/fvt1999pipe-eng/analisis_connectaTel.git
+   cd analisis_connectaTel
+   pip install -r requirements.txt
+   ```
 
-```python
-   plans = pd.read_csv('/datasets/plans.csv')
-   users = pd.read_csv('/datasets/users_latam.csv')
-   usage = pd.read_csv('/datasets/usage.csv')
-```
+2. Crea una carpeta `datasets/` junto al notebook y copia en ella los tres archivos CSV.
+3. Abre `analisis_connectatel.ipynb` en Jupyter y ejecuta las celdas en orden.
 
-   - En **Colab**, si subiste los archivos al panel lateral, cambia la ruta a `'/content/plans.csv'` (y lo mismo para los otros dos).
-   - En **local**, usa la ruta relativa, por ejemplo `'data/plans.csv'`.
+En Google Colab, sube los tres archivos a una carpeta `datasets/` desde el panel **Archivos** antes de ejecutar el notebook.
 
-4. Ejecuta las celdas **en orden**: cada paso depende de la limpieza y las transformaciones del anterior.
-5. Los resultados (tablas, gráficos y segmentos) deben coincidir con los del notebook publicado.
+## Herramientas
 
----
+Python · pandas · Matplotlib · Seaborn · Jupyter / Google Colab
 
-## 👤 Autor
+## Autor
 
-**Felipe**: análisis de datos del proyecto ConnectaTel.
+**Felipe Vásquez Torres**, analista de datos con experiencia en supply chain y operaciones.
+
+[LinkedIn](https://www.linkedin.com/in/felipe-vasquez-torres) · [Portafolio](https://fvt1999pipe-eng.github.io) · fe.vasquez.t@gmail.com
