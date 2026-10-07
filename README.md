@@ -92,4 +92,4 @@ Python · pandas · Matplotlib · Seaborn · Jupyter / Google Colab
 
 **Felipe Vásquez Torres**, analista de datos con experiencia en supply chain y operaciones.
 
-[LinkedIn](https://www.linkedin.com/in/felipe-vasquez-torres) · [Portafolio](https://fvt1999pipe-eng.github.io) · fe.vasquez.t@gmail.com
+[LinkedIn](https://www.linkedin.com/in/felipe-vasquez-torres) · [Portafolio](https://fvt1999pipe-eng.github.io) · fe.vasqueztorres@gmail.com
